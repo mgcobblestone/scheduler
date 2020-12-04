@@ -13,6 +13,8 @@ jobs:
         - uses: guix77/phpcs-drupal-action@v1.0.0
 
 #--------------------------
+# test with different versions of Coder? or just the latest?
+
       # - name: Install Coder
       #   run: composer require --dev drupal/coder dealerdirect/phpcodesniffer-composer-installer
 

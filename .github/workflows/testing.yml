@@ -1,4 +1,4 @@
-name: PHPUnit and PHPCS
+name: PHPUnit tests
 # Triggers when code is pushed to any branch or any pull request is made.
 on: [push, pull_request]
 jobs:
@@ -55,6 +55,7 @@ jobs:
           composer require drupal/core-recommended --with-all-dependencies
           composer update
           pwd
+          ls -laG
 
       - name: Start the local web server
         run: php -S localhost:8000 -t web 2>&1 &
