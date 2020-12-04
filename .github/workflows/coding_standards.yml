@@ -1,6 +1,7 @@
 # From https://github.com/marketplace/actions/phpcs-drupal-check-with-annotations
 name: Drupal coding standards
-on: [push]
+# on: [push]
+on: []
 
 jobs:
   phpcs-drupal:
