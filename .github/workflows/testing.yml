@@ -56,14 +56,20 @@ jobs:
         run: php -S localhost:8000 -t web 2>&1 &
         # if: matrix.test-types == 'functional'
 
-      - name: Run PHPUnit via php-actions
-        uses: php-actions/phpunit@v9
-        with:
-          # test_suffix: .php
-          # configuration: custom/path/to/phpunit.xml
-          # memory_limit: 256M
-          # bootstrap: vendor/autoload.php
-          args: 'tests/src'
+      - name: Install Coder
+        run: composer require --dev drupal/coder dealerdirect/phpcodesniffer-composer-installer
+
+      - name: Install Drupal core
+        run: composer require drupal/drupal
+
+      # - name: Run PHPUnit via php-actions
+      #   uses: php-actions/phpunit@v9
+      #   with:
+      #     # test_suffix: .php
+      #     # configuration: custom/path/to/phpunit.xml
+      #     # memory_limit: 256M
+      #     # bootstrap: vendor/autoload.php
+      #     args: 'tests/src'
 
 
       - name: Run PHPUnit plain
