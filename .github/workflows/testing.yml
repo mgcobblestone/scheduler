@@ -58,10 +58,10 @@ jobs:
 
       - name: Run PHPUnit
         uses: php-actions/phpunit@v1
-        run: |
-          pwd
-          ./vendor/bin/phpunit --color=always
-          ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/
+        # run: |
+        #   pwd
+        #   ./vendor/bin/phpunit --color=always
+        #   ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/
         env:
           SIMPLETEST_BASE_URL: http://localhost:8000
 
