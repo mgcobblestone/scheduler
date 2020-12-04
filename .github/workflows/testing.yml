@@ -57,10 +57,14 @@ jobs:
         # if: matrix.test-types == 'functional'
 
       - name: Run PHPUnit via php-actions
-        uses: php-actions/phpunit@v1
+        uses: php-actions/phpunit@v9
         with:
           test_suffix: .php
-          group: scheduler
+          # configuration: custom/path/to/phpunit.xml
+          # memory_limit: 256M
+          # bootstrap: vendor/autoload.php
+          args: --coverage-text
+
 
       - name: Run PHPUnit plain
         run: |
