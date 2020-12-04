@@ -59,11 +59,11 @@ jobs:
       - name: Run PHPUnit via php-actions
         uses: php-actions/phpunit@v9
         with:
-          test_suffix: .php
+          # test_suffix: .php
           # configuration: custom/path/to/phpunit.xml
           # memory_limit: 256M
           # bootstrap: vendor/autoload.php
-          args: --coverage-text
+          args: 'tests/src'
 
 
       - name: Run PHPUnit plain
