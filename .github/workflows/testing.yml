@@ -60,7 +60,7 @@ jobs:
         run: composer require --dev drupal/coder dealerdirect/phpcodesniffer-composer-installer
 
       - name: Install Drupal core
-        run: composer require drupal/drupal --with-all-dependencies
+        run: composer require drupal/core-recommended --with-all-dependencies
 
       # - name: Run PHPUnit via php-actions
       #   uses: php-actions/phpunit@v9
