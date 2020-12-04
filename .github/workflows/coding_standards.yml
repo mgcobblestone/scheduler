@@ -1,8 +1,8 @@
 # From https://github.com/marketplace/actions/phpcs-drupal-check-with-annotations
 name: Drupal coding standards
-on: [push]
 # TEMP change to save this being run everytime I change the testing.yml file
-# on: [pull_request_review]
+on: [pull_request_review]
+# on: [push]
 
 jobs:
   phpcs-drupal:
@@ -11,3 +11,17 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         - uses: guix77/phpcs-drupal-action@v1.0.0
+
+#--------------------------
+      # - name: Install Coder
+      #   run: composer require --dev drupal/coder dealerdirect/phpcodesniffer-composer-installer
+
+      # - name: Run PHPCS
+      #   # Show the violations in detail and do not fail for any errors or warnings.
+      #   # Run a second time to give a summary and totals, and fail for errors and warnings.
+      #   run: |
+      #     ./vendor/bin/phpcs -p . --runtime-set ignore_warnings_on_exit 1 --runtime-set ignore_errors_on_exit 1
+      #     ./vendor/bin/phpcs -p . --report=summary
+      #
+      # - name: Run PHPStan
+      #   run: if [[ ${{ matrix.phpstan }} == "1" ]]; then ./vendor/bin/phpstan analyse; fi
