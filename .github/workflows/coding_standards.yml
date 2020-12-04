@@ -1,8 +1,8 @@
 # From https://github.com/marketplace/actions/phpcs-drupal-check-with-annotations
 name: Drupal coding standards
-# on: [push]
+on: [push]
 # TEMP change to save this being run everytime I change the testing.yml file
-on: [pull_request_review]
+# on: [pull_request_review]
 
 jobs:
   phpcs-drupal:
