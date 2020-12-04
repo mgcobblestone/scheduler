@@ -56,24 +56,21 @@ jobs:
         run: php -S localhost:8000 -t web 2>&1 &
         # if: matrix.test-types == 'functional'
 
-      - name: Run PHPUnit
+      - name: Run PHPUnit via php-actions
         uses: php-actions/phpunit@v1
-        # run: |
-        #   pwd
-        #   ./vendor/bin/phpunit --color=always
-        #   ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/
+        with:
+          test_suffix: .php
+          group: scheduler
+
+      - name: Run PHPUnit plain
+        run: |
+          pwd
+          ./vendor/bin/phpunit --color=always
+          ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/
         env:
           SIMPLETEST_BASE_URL: http://localhost:8000
 
       - name: Run PHPCS
-        run: ./vendor/bin/phpcs
-
-      - name: Check custom standard autoloading
-        # Ensure that a custom standard can be invoked and the auto-loading of
-        # abstract classes works.
-        # Ensure that the DrupalPractice standard can be invoked standalone and the
-        # auto-loading of abstract classes works.
-        
         # Show the violations in detail and do not fail for any errors or warnings.
         # Run a second time to give a summary and totals, and fail for errors and warnings.
         run: |
