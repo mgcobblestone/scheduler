@@ -19,7 +19,7 @@ use Drupal\scheduler_rules_integration\Event\SchedulerHasPublishedThisNodeEvent;
 use Drupal\scheduler_rules_integration\Event\SchedulerHasUnpublishedThisNodeEvent;
 
 /**
- * Implements hook_ENTITY_TYPE_insert() for node entities.
+ * Implements hook_ENTITY_TYPE_insert() for node entities.   
  */
 function scheduler_rules_integration_node_insert(EntityInterface $node) {
   // Invoke the Rules events to indicate that a new node has been scheduled.

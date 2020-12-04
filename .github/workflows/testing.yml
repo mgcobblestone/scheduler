@@ -1,4 +1,4 @@
-name: Tests
+name: PHPUnit and PHPCS
 # Triggers when code is pushed to any branch or any pull request is made.
 on: [push, pull_request]
 jobs:
@@ -52,16 +52,16 @@ jobs:
         # dependencies in vendor.
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-     - name: Start the local web server
+      - name: Start the local web server
         run: php -S localhost:8000 -t web 2>&1 &
         # if: matrix.test-types == 'functional'
 
-     - name: Run PHPUnit
+      - name: Run PHPUnit
         uses: php-actions/phpunit@v1
         run: |
           pwd
           ./vendor/bin/phpunit --color=always
-        #    ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/;
+          ./vendor/bin/phpunit -c ./core/phpunit.xml.dist --debug ./modules/$MODULE/tests/
         env:
           SIMPLETEST_BASE_URL: http://localhost:8000
 
