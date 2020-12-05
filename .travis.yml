@@ -50,6 +50,16 @@ jobs:
         #   4 Passing command as string in drush
         - DEPRECATIONS=14
         - RULES=NO
+    - php: 7.4
+      env:
+        - DRUPAL_CORE=9.2.x
+        # --- Remaining self deprecation notices (6)
+        #   6 StatementWrapper::fetchColumn
+        # --- Remaining direct deprecation notices (8)
+        #   4 inheritEnvironmentVariables
+        #   4 Passing command as string in drush
+        - DEPRECATIONS=14
+        - RULES=NO
 
 # Be sure to cache composer downloads.
 cache:

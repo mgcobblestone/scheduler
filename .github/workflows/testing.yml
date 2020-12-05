@@ -51,9 +51,16 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Install Drupal core
+        run: composer require drupal/core-recommended --with-all-dependencies
+          
+      - name: Look around for things
         run: |
-          composer require drupal/core-recommended --with-all-dependencies
-          composer update
+          pwd
+          ls -laG
+          cd vendor
+          pwd
+          ls -laG
+          cd bin
           pwd
           ls -laG
 
