@@ -49,8 +49,7 @@ jobs:
       #     restore-keys: ${{ runner.os }}-composer-cache-
 
       - name: Install Composer dependencies
-        run: composer install --no-progress --dev
-        # --prefer-dist --optimize-autoloader
+        run: composer install --no-progress -vvv --prefer-dist --optimize-autoloader
 
       - name: Install Drupal core
         run: composer require drupal/core-recommended --with-all-dependencies
@@ -63,6 +62,12 @@ jobs:
           pwd
           ls -laG
           cd bin
+          pwd
+          ls -laG
+          cd /home/runner
+          pwd
+          ls -laG
+          cd /home/runner/work
           pwd
           ls -laG
           cd /home/runner/work/scheduler
