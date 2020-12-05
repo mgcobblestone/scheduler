@@ -21,7 +21,7 @@ jobs:
       - name: Checkout Scheduler
         uses: actions/checkout@v2
 
-      # - name: Setup PHP, with composer and extensions
+      - name: Setup PHP, with composer and extensions
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
@@ -32,7 +32,7 @@ jobs:
         id: composercache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      # - name: Cache composer dependencies
+      - name: Cache composer dependencies
       - uses: actions/cache@v2
         with:
           path: ${{ steps.composercache.outputs.dir }}
@@ -74,6 +74,12 @@ jobs:
           pwd
           ls -laG
           cd /home/runner/work/scheduler
+          pwd
+          ls -laG
+          cd /home/runner/work/scheduler/scheduler/drupal
+          pwd
+          ls -laG
+          cd ${{ secrets.DOCROOT }}
           pwd
           ls -laG
 
