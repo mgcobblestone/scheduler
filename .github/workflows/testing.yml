@@ -79,8 +79,13 @@ jobs:
           cd /home/runner/work/scheduler/scheduler/vendor/drupal
           pwd
           ls -laG
-          echo ${{ secrets.DOCROOT }}
-          cd ${{ secrets.DOCROOT }}
+          cd /home/runner/work/scheduler/scheduler/vendor/drupal/core
+          pwd
+          ls -laG
+          cd /home/runner/work/scheduler/scheduler/vendor/composer
+          pwd
+          ls -laG
+          cd /home/runner/.composer
           pwd
           ls -laG
 
