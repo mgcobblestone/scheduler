@@ -5,6 +5,7 @@ services:
       - '@date.formatter'
       - '@logger.channel.scheduler'
       - '@module_handler'
+      - '@entity_field.manager'
       - '@entity_type.manager'
       - '@config.factory'
       - '@event_dispatcher'
