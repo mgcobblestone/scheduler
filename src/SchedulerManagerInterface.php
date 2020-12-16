@@ -2,7 +2,6 @@
 
 namespace Drupal\scheduler;
 
-
 /**
  * Provides an interface for scheduler managers.
  */

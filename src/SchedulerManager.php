@@ -2,29 +2,14 @@
 
 namespace Drupal\scheduler;
 
-use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Component\EventDispatcher\Event;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Entity\EntityFieldManagerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\scheduler\Exception\SchedulerMissingDateException;
 use Drupal\scheduler\Exception\SchedulerNodeTypeNotEnabledException;
-use Psr\Log\LoggerInterface;
 
 /**
  * Defines a scheduler manager.
  */
 class SchedulerManager extends SchedulerManagerBase implements SchedulerManagerInterface {
-
-  /**
-   * Constructs a SchedulerManager object.
-   */
-  public function __construct(DateFormatterInterface $dateFormatter, LoggerInterface $logger, ModuleHandlerInterface $moduleHandler, EntityFieldManagerInterface $entityFieldManager, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, ContainerAwareEventDispatcher $eventDispatcher, TimeInterface $time) {
-    parent::__construct($dateFormatter, $logger, $moduleHandler, $entityFieldManager, $entityTypeManager, $configFactory, $eventDispatcher, $time);
-  }
 
   /**
    * Dispatch a Scheduler event.
