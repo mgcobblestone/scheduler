@@ -7,12 +7,9 @@ use Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher;
 use Drupal\Component\EventDispatcher\Event;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Link;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
 use Drupal\scheduler\Exception\SchedulerMissingDateException;
 use Drupal\scheduler\Exception\SchedulerNodeTypeNotEnabledException;
 use Psr\Log\LoggerInterface;
@@ -20,70 +17,13 @@ use Psr\Log\LoggerInterface;
 /**
  * Defines a scheduler manager.
  */
-class SchedulerManager {
-
-  use StringTranslationTrait;
-
-  /**
-   * Date formatter service object.
-   *
-   * @var \Drupal\Core\Datetime\DateFormatterInterface
-   */
-  protected $dateFormatter;
-
-  /**
-   * Scheduler Logger service object.
-   *
-   * @var \Psr\Log\LoggerInterface
-   */
-  protected $logger;
-
-  /**
-   * Module handler service object.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
-   * Entity Type Manager service object.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Config Factory service object.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * The event dispatcher.
-   *
-   * @var \Drupal\Component\EventDispatcher\ContainerAwareEventDispatcher
-   */
-  protected $eventDispatcher;
-
-  /**
-   * The time service.
-   *
-   * @var \Drupal\Component\Datetime\TimeInterface
-   */
-  protected $time;
+class SchedulerManager extends SchedulerManagerBase implements SchedulerManagerInterface {
 
   /**
    * Constructs a SchedulerManager object.
    */
-  public function __construct(DateFormatterInterface $dateFormatter, LoggerInterface $logger, ModuleHandlerInterface $moduleHandler, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, ContainerAwareEventDispatcher $eventDispatcher, TimeInterface $time) {
-    $this->dateFormatter = $dateFormatter;
-    $this->logger = $logger;
-    $this->moduleHandler = $moduleHandler;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->configFactory = $configFactory;
-    $this->eventDispatcher = $eventDispatcher;
-    $this->time = $time;
+  public function __construct(DateFormatterInterface $dateFormatter, LoggerInterface $logger, ModuleHandlerInterface $moduleHandler, EntityFieldManagerInterface $entityFieldManager, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, ContainerAwareEventDispatcher $eventDispatcher, TimeInterface $time) {
+    parent::__construct($dateFormatter, $logger, $moduleHandler, $entityFieldManager, $entityTypeManager, $configFactory, $eventDispatcher, $time);
   }
 
   /**
@@ -194,7 +134,7 @@ class SchedulerManager {
         // @TODO This will now never be thrown due to the empty(publish_on)
         // check above to cater for translations. Remove this exception?
         if (empty($node->publish_on->value)) {
-          $field_definitions = $this->entityTypeManager->getFieldDefinitions('node', $node->getType());
+          $field_definitions = $this->entityFieldManager->getFieldDefinitions('node', $node->getType());
           $field = (string) $field_definitions['publish_on']->getLabel();
           throw new SchedulerMissingDateException(sprintf("Node %d '%s' will not be published because field '%s' has no value", $node->id(), $node->getTitle(), $field));
         }
@@ -379,7 +319,7 @@ class SchedulerManager {
         // @TODO This will now never be thrown due to the empty(unpublish_on)
         // check above to cater for translations. Remove this exception?
         if (empty($unpublish_on)) {
-          $field_definitions = $this->entityTypeManager->getFieldDefinitions('node', $node->getType());
+          $field_definitions = $this->entityFieldManager->getFieldDefinitions('node', $node->getType());
           $field = (string) $field_definitions['unpublish_on']->getLabel();
           throw new SchedulerMissingDateException(sprintf("Node %d '%s' will not be unpublished because field '%s' has no value", $node->id(), $node->getTitle(), $field));
         }
@@ -477,37 +417,6 @@ class SchedulerManager {
   }
 
   /**
-   * Checks whether a scheduled action on a node is allowed.
-   *
-   * This provides a way for other modules to prevent scheduled publishing or
-   * unpublishing, by implementing hook_scheduler_allow_publishing() or
-   * hook_scheduler_allow_unpublishing().
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The node on which the action is to be performed.
-   * @param string $action
-   *   The action that needs to be checked. Can be 'publish' or 'unpublish'.
-   *
-   * @return bool
-   *   TRUE if the action is allowed, FALSE if not.
-   *
-   * @see hook_scheduler_allow_publishing()
-   * @see hook_scheduler_allow_unpublishing()
-   */
-  public function isAllowed(NodeInterface $node, $action) {
-    // Default to TRUE.
-    $result = TRUE;
-    // Check that other modules allow the action.
-    $hook = 'scheduler_allow_' . $action . 'ing';
-    foreach ($this->moduleHandler->getImplementations($hook) as $module) {
-      $function = $module . '_' . $hook;
-      $result &= $function($node);
-    }
-
-    return $result;
-  }
-
-  /**
    * Gather node IDs for all nodes that need to be $action'ed.
    *
    * Modules can implement hook_scheduler_nid_list($action) and return an array
@@ -528,62 +437,6 @@ class SchedulerManager {
     }
 
     return $nids;
-  }
-
-  /**
-   * Run the lightweight cron.
-   *
-   * The Scheduler part of the processing performed here is the same as in the
-   * normal Drupal cron run. The difference is that only scheduler_cron() is
-   * executed, no other modules hook_cron() functions are called.
-   *
-   * This function is called from the external crontab job via url
-   * /scheduler/cron/{access key} or it can be run interactively from the
-   * Scheduler configuration page at /admin/config/content/scheduler/cron.
-   * It is also executed when running Scheduler Cron via drush.
-   *
-   * @param array $options
-   *   Options passed from drush command or admin form.
-   */
-  public function runLightweightCron(array $options = []) {
-    // When calling via drush the log messages can be avoided by using --nolog.
-    $log = $this->setting('log') && empty($options['nolog']);
-    if ($log) {
-      if (array_key_exists('nolog', $options)) {
-        $trigger = 'drush command';
-      }
-      elseif (array_key_exists('admin_form', $options)) {
-        $trigger = 'admin user form';
-      }
-      else {
-        $trigger = 'url';
-      }
-      $this->logger->notice('Lightweight cron run activated by @trigger.', ['@trigger' => $trigger]);
-    }
-    scheduler_cron();
-    if (ob_get_level() > 0) {
-      $handlers = ob_list_handlers();
-      if (isset($handlers[0]) && $handlers[0] == 'default output handler') {
-        ob_clean();
-      }
-    }
-    if ($log) {
-      $link = Link::fromTextAndUrl($this->t('settings'), Url::fromRoute('scheduler.cron_form'));
-      $this->logger->notice('Lightweight cron run completed.', ['link' => $link->toString()]);
-    }
-  }
-
-  /**
-   * Helper method to access the settings of this module.
-   *
-   * @param string $key
-   *   The key of the configuration.
-   *
-   * @return \Drupal\Core\Config\ImmutableConfig
-   *   The value of the configuration item requested.
-   */
-  protected function setting($key) {
-    return $this->configFactory->get('scheduler.settings')->get($key);
   }
 
   /**
