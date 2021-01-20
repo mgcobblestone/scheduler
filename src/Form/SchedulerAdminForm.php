@@ -130,6 +130,8 @@ class SchedulerAdminForm extends ConfigFormBase {
       ],
     ];
 
+    $form['#attached']['library'][] = 'scheduler/admin';
+
     return parent::buildForm($form, $form_state);
   }
 
