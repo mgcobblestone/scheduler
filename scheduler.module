@@ -402,6 +402,36 @@ function scheduler_entity_base_field_info(EntityTypeInterface $entity_type) {
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function scheduler_views_data_alter(array &$data) {
+  // Add a relationship from Media Field Revision back to Media Field Data.
+  // @todo This can be removed when the relationship is added to core.
+  // @see https://www.drupal.org/project/drupal/issues/3036192
+  // Replace the existing 'argument' item.
+  $data['media_field_revision']['mid']['argument'] = [
+    'id' => 'media_mid',
+    'numeric' => TRUE,
+  ];
+  // Add a 'relationship' item.
+  $data['media_field_revision']['mid']['relationship'] = [
+    'id' => 'standard',
+    'base' => 'media_field_data',
+    'field' => 'mid',
+    'base field' => 'mid',
+    'title' => t('Media Field Data'),
+    'help' => t('Relationship to access the Media fields that are not on Media Revision.'),
+    'label' => t('Media Field'),
+    'extra' => [
+      [
+        'field' => 'langcode',
+        'left_field' => 'langcode',
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_ENTITY_TYPE_view() for node entities.
  */
 function scheduler_node_view(array &$build, EntityInterface $node, EntityViewDisplayInterface $display, $view_mode) {
