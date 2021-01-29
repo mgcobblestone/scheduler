@@ -384,7 +384,7 @@ function scheduler_entity_base_field_info(EntityTypeInterface $entity_type) {
       ->setDisplayConfigurable('form', TRUE)
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
-      ->addConstraint('SchedulerPublishOn');
+      ->addConstraint(ucfirst($entity_type->id()) . 'SchedulerPublishOn' );
 
     $fields['unpublish_on'] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Unpublish on'))
@@ -395,7 +395,7 @@ function scheduler_entity_base_field_info(EntityTypeInterface $entity_type) {
       ->setDisplayConfigurable('form', TRUE)
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
-      ->addConstraint('SchedulerUnpublishOn');
+      ->addConstraint(ucfirst($entity_type->id()) . 'SchedulerUnpublishOn');
 
     return $fields;
   }
